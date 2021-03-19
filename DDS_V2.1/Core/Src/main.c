@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdbool.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -33,6 +34,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define OUTPUT_FREQUENCY 31000000
+#define SYSTEM_CLOCK 150000000
+#define PHASE 0                       //must be a multiple of 11.25
+#define REFCLK_MULTIPLIER_ENABLE true
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +50,6 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,6 +112,10 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
   HAL_TIM_Base_Start_IT(&htim2);
+
+  extern uint16_t * freqWords = malloc(sizeof(uint16_t) * 4);
+  freqWords = Get_Freq_Tuning_Words(OUTPUT_FREQUENCY, SYSTEM_CLOCK);
+  extern uint16_t phaseWord = Get_Phase_Tuning_Word(PHASE, REFCLK_MULTIPLIER_ENABLE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -305,7 +313,26 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+uint16_t Get_Phase_Tuning_Word(float phase, bool isMultiplierEnable) {
+	uint16_t phaseTuningWord = (phase / 11.25) << 3;
+	if(isMultiplierEnable) {
+		phaseTuningWord |= 1;
+	}
 
+	return phaseTuningWord;
+}
+
+uint16_t * Get_Freq_Tuning_Words(int outputFrequency, int systemClock) {
+	int tuningWord = outputFrequency * pow(2, 32) / systemClock; //datasheet formula
+
+	uint16_t * words;
+	words = malloc(sizeof(uint16_t) * 4);
+	for (uint8_t i = 0; i < sizeof(words); i++) {
+		words[i] = (tuningWord >> (8 * i)) & 255;
+	}
+
+	return words;
+}
 /* USER CODE END 4 */
 
 /**

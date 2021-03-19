@@ -33,8 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define OUTPUT_FREQUENCY 31000000
-#define SYSTEM_CLOCK 150000000
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,11 +43,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-char w0[8], //Word for 6X REFCLK Multiplier Enable
-	 w1[8], //Frequency word 1
-	 w2[8], //Frequency word 2
-	 w3[8], //Frequency word 3
-	 w4[8]; //Frequency word 4
+
 
 uint8_t clkImpulseCounter = 0;
 /* USER CODE END PV */
@@ -220,16 +215,13 @@ void TIM2_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-uint16_t * Get_Freq_Tuning_Words(int outputFrequency, int systemClock) {
-	int tuningWord = outputFrequency * pow(2, 32) / systemClock; //datasheet formula
+GPIO_PinState PinState_For_Bit(uint8_t bit) {
 
-	uint16_t * words;
-	words = malloc(sizeof(uint16_t) * 4);
-	for (uint8_t i = 0; i < sizeof(words); i++) {
-		words[i] = (tuningWord >> (8 * i)) & 255;
-	}
+	if(bit == 1)
+		return GPIO_PIN_SET;
+	else
+		return GPIO_PIN_RESET;
 
-	return words;
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
