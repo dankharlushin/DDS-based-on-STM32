@@ -309,16 +309,16 @@ void TIM2_IRQHandler(void)
 		  switch(clkImpulseCounter % 3) {
 
 		  case 0:
-			  //Set_Data_DDS1((uint16_t) tuningWordsDDS1[wordCounter]);
+			  Set_Data_DDS1((uint16_t) tuningWordsDDS1[wordCounter]);
 			  Set_Data_DDS2((uint16_t) tuningWordsDDS2[wordCounter]);
 			  wordCounter++;
 			  break;
 		  case 1:
-			  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
 			  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
 			  break;
 		  case 2:
-			  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
 			  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
 			  break;
 
@@ -328,7 +328,7 @@ void TIM2_IRQHandler(void)
 
 	  }
 	  else if (clkImpulseCounter == 15) {
-		  	  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+		  	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
 		  	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
 		  	  clkImpulseCounter++;
 	  }
@@ -337,7 +337,7 @@ void TIM2_IRQHandler(void)
 	  }
 
 	  else if (clkImpulseCounter == 19) {
-	  		  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+	  		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
 	  		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
 	  		  clkImpulseCounter++;
 	  }
