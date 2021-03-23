@@ -43,8 +43,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern uint16_t phaseWord;
-extern uint16_t * freqWords;
+extern uint16_t * tuningWordsDDS1;
+extern uint16_t phaseWordDDS1;
+extern uint16_t * tuningWordsDDS2;
+extern uint16_t phaseWordDDS2;
 uint8_t clkImpulseCounter = 0;
 uint8_t wordCounter = 0;
 /* USER CODE END PV */
@@ -84,28 +86,28 @@ void Set_Data_DDS1(uint16_t word) {
 		GPIO_PinState state = Set_PinState(bit);
 
 		if (pin == 0) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, state); //D0
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, state); //D01
 		}
 		else if (pin == 1) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, state); //D1
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, state); //D11
 		}
 		else if (pin == 2) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, state); //D2
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, state); //D21
 		}
 		else if (pin == 3) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, state); //D3
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, state); //D31
 		}
 		else if (pin == 4) {
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, state); //D4
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, state); //D41
 		}
 		else if (pin == 5) {
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, state); //D5
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, state); //D51
 		}
 		else if (pin == 6) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, state); //D6
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, state); //D61
 		}
 		else if (pin == 7) {
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, state);//D7
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, state);//D71
 			break;
 		}
 
@@ -113,6 +115,52 @@ void Set_Data_DDS1(uint16_t word) {
 
 
 }
+
+void Set_Data_DDS2(uint16_t word) {
+	for (uint8_t i = 1, pin = 0; i < 256; i = i << 1, pin++) {
+		uint8_t bit = word & i;
+		if (bit != 0) {
+			bit = 1;
+		}
+		else {
+			bit = 0;
+		}
+
+		GPIO_PinState state = Set_PinState(bit);
+
+		if (pin == 0) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, state); //D02
+		}
+		else if (pin == 1) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, state); //D12
+		}
+		else if (pin == 2) {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, state); //D22
+		}
+		else if (pin == 3) {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, state); //D32
+		}
+		else if (pin == 4) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, state); //D42
+		}
+		else if (pin == 5) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, state); //D52
+		}
+		else if (pin == 6) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, state); //D62
+		}
+		else if (pin == 7) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, state);//D72
+			break;
+		}
+
+	}
+
+
+}
+
+
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -261,14 +309,17 @@ void TIM2_IRQHandler(void)
 		  switch(clkImpulseCounter % 3) {
 
 		  case 0:
-			  Set_Data_DDS1((uint16_t) freqWords[wordCounter]);
+			  //Set_Data_DDS1((uint16_t) tuningWordsDDS1[wordCounter]);
+			  Set_Data_DDS2((uint16_t) tuningWordsDDS2[wordCounter]);
 			  wordCounter++;
 			  break;
 		  case 1:
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
 			  break;
 		  case 2:
-			  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
+			  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
 			  break;
 
 		  }
@@ -277,17 +328,19 @@ void TIM2_IRQHandler(void)
 
 	  }
 	  else if (clkImpulseCounter == 15) {
-		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
-		  clkImpulseCounter++;
+		  	  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+		  	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+		  	  clkImpulseCounter++;
 	  }
 	  else if (clkImpulseCounter < 19) {
-		  clkImpulseCounter++;
+		  	  clkImpulseCounter++;
 	  }
 
 	  else if (clkImpulseCounter == 19) {
-	  		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+	  		  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+	  		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
 	  		  clkImpulseCounter++;
-	  	  }
+	  }
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */

@@ -38,7 +38,8 @@
 /* USER CODE BEGIN PD */
 #define OUTPUT_FREQUENCY 30000000
 #define SYSTEM_CLOCK 150000000
-#define PHASE 0                      //must be a multiple of 11.25
+#define PHASE_DDS1 0                      //must be a multiple of 11.25
+#define PHASE_DDS2 0                      //must be a multiple of 11.25
 #define REFCLK_MULTIPLIER_ENABLE true
 /* USER CODE END PD */
 
@@ -52,8 +53,10 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-uint16_t * freqWords;
-uint16_t phaseWord;
+uint16_t * tuningWordsDDS1;
+uint16_t phaseWordDDS1;
+uint16_t * tuningWordsDDS2;
+uint16_t phaseWordDDS2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,10 +137,30 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
-  freqWords = malloc(sizeof(uint16_t) * 5);
-  freqWords = Get_Freq_Tuning_Words(OUTPUT_FREQUENCY, SYSTEM_CLOCK);
-  phaseWord = Get_Phase_Tuning_Word(PHASE, REFCLK_MULTIPLIER_ENABLE);
-  freqWords[0] = phaseWord;
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //setting low level on FQ_UD DDS2
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET); //setting low level on W_CLK DDS2
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);  //setting low level on RESET DDS2
+
+  /*Setting low level on data pins DDS2*/
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+
+
+  tuningWordsDDS1 = malloc(sizeof(uint16_t) * 5);
+  tuningWordsDDS1 = Get_Freq_Tuning_Words(OUTPUT_FREQUENCY, SYSTEM_CLOCK);
+  phaseWordDDS1 = Get_Phase_Tuning_Word(PHASE_DDS1, REFCLK_MULTIPLIER_ENABLE);
+  tuningWordsDDS1[0] = phaseWordDDS1;
+
+  tuningWordsDDS2 = malloc(sizeof(uint16_t) * 5);
+  tuningWordsDDS2 = Get_Freq_Tuning_Words(OUTPUT_FREQUENCY, SYSTEM_CLOCK);
+  phaseWordDDS2 = Get_Phase_Tuning_Word(PHASE_DDS2, REFCLK_MULTIPLIER_ENABLE);
+  tuningWordsDDS2[0] = phaseWordDDS2;
 
   HAL_TIM_Base_Start_IT(&htim2);
 
