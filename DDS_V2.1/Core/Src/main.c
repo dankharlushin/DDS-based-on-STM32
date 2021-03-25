@@ -38,7 +38,7 @@
 /* USER CODE BEGIN PD */
 #define OUTPUT_FREQUENCY 30000000
 #define SYSTEM_CLOCK 150000000
-#define PHASE_DDS1 11.25                 //must be a multiple of 11.25
+#define PHASE_DDS1 0                //must be a multiple of 11.25
 #define PHASE_DDS2 0                     //must be a multiple of 11.25
 #define REFCLK_MULTIPLIER_ENABLE true
 /* USER CODE END PD */

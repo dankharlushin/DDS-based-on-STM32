@@ -332,11 +332,11 @@ void TIM2_IRQHandler(void)
 		  	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
 		  	  clkImpulseCounter++;
 	  }
-	  else if (clkImpulseCounter < 19) {
+	  else if (clkImpulseCounter < 20) {
 		  	  clkImpulseCounter++;
 	  }
 
-	  else if (clkImpulseCounter == 19) {
+	  else if (clkImpulseCounter == 20) {
 	  		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
 	  		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
 	  		  clkImpulseCounter++;
